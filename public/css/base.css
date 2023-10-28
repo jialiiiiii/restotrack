@@ -1,0 +1,217 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora&display=swap');
+
+html,
+body {
+    font-family: Lora, 'Times New Roman', serif !important;
+    background-color: #f4e1cd !important;
+    color: #021e43 !important;
+}
+
+::selection {
+    color: #E8E8E8;
+    background: #0C376C;
+}
+
+::-moz-selection {
+    color: #E8E8E8;
+    background: #0C376C;
+}
+
+div.body {
+    margin-top: 7rem;
+}
+
+.title-blue {
+    color: #0c3261;
+}
+
+/* form control */
+.password-input {
+    position: relative;
+}
+
+.fa-eye:not(.btn-view),
+.fa-eye-slash {
+    cursor: pointer;
+    position: absolute;
+    right: .8rem;
+    top: .8rem;
+}
+
+.form-control {
+    color: #021e43;
+}
+
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.1rem rgba(13, 110, 253, .25);
+}
+
+.form-text {
+    font-size: .9rem;
+}
+
+.btn-primary {
+    background: #1F579C;
+    border-color: #1F579C;
+}
+
+.btn-primary:hover {
+    background: #2664b1;
+    border-color: #2664b1;
+}
+
+.btn-primary:focus {
+    background: #2664b1;
+    border-color: #2664b1;
+    box-shadow: 0 0 0 0.25rem rgb(129 185 255 / 50%);
+}
+
+.btn-secondary {
+    background: #764A3D;
+    border-color: #764A3D;
+}
+
+.btn-secondary:hover {
+    background: #815447;
+    border-color: #815447;
+}
+
+.btn-secondary:focus {
+    background: #815447;
+    border-color: #815447;
+    box-shadow: 0 0 0 0.25rem rgb(164 117 103 / 50%);
+}
+
+.custom-form {
+    width: 40%;
+}
+
+@media only screen and (max-width: 768px) {
+    .custom-form {
+        width: 60%;
+    }
+}
+
+@media only screen and (max-width: 576px) {
+    .custom-form {
+        width: 80%;
+    }
+}
+
+/* scroll top button */
+.scroll-top {
+    position: fixed;
+    visibility: hidden;
+    opacity: 0;
+    right: 15px;
+    bottom: 15px;
+    z-index: 99999;
+    background: #e52626;
+    width: 44px;
+    height: 44px;
+    border-radius: 50px;
+    transition: all 0.4s;
+    text-decoration: none;
+}
+
+.scroll-top i {
+    font-size: 20px;
+    color: #f9f4df;
+    line-height: 0;
+}
+
+.scroll-top:hover {
+    background: #f52a2a;
+}
+
+.scroll-top.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+
+/* --------------------------------------------------
+    Management Portal 
+---------------------------------------------------*/
+
+/* action icons */
+.btn-action {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    margin-right: 0.3rem;
+    margin-left: 0.3rem;
+    color: inherit;
+}
+
+/* search */
+.input-group-text {
+    background-color: #1F579C;
+    color: #fff;
+    position: relative;
+}
+
+.search-bar {
+    padding-right: 1.6rem;
+    border-top-right-radius: .25rem !important;
+    border-bottom-right-radius: .25rem !important;
+}
+
+.clear-icon {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.6rem;
+    font-size: 1.1rem;
+    color: #1f579c;
+    z-index: 5;
+    display: none;
+}
+
+/* table */
+.table {
+    color: inherit;
+    background: #fff;
+    border-radius: 5px;
+}
+
+.table>thead {
+    background: #cddef2;
+}
+
+.table>:not(caption)>*>* {
+    padding: .8rem .8rem;
+}
+
+.table>:not(:last-child)>:last-child>* {
+    border-bottom-color: #adbac9;
+    border-bottom-width: 1.5px;
+}
+
+tbody.view th {
+    text-align: left;
+    background: #cddef2;
+}
+
+tbody.view tr:not(:last-child) th {
+    border-color: #adbac9;
+}
+
+/* pagination */
+.page-item.active .page-link {
+    background-color: #1F579C;
+    border-color: #1F579C;
+}
+
+a.page-link,
+a.page-link:hover {
+    color: #0c3261;
+}
+
+a.page-link:focus {
+    box-shadow: 0 0 0 0.1rem rgba(13, 110, 253, .25);
+}
+
+p.small.text-muted {
+    color: #0c3261 !important;
+}
