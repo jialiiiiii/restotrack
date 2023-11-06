@@ -44,6 +44,7 @@ Route::get('/logout', [SessionController::class, 'logout']);
 // Staff
 Route::put('/meals/{id}/toggleAvailability', [MealController::class, 'toggleAvailability']);
 Route::resource('/meals', MealController::class);
+Route::get('/tables/arrange', [TableController::class, 'arrange']);
 Route::resource('/tables', TableController::class);
 
 // Admin

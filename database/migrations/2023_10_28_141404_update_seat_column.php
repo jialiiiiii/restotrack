@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tables', function (Blueprint $table) {
-            $table->id();
-            $table->integer('row')->unsigned();
-            $table->integer('col')->unsigned();
-            $table->integer('seat')->unsigned();
-            $table->string('status');
+        Schema::table('tables', function (Blueprint $table) {
+            $table->integer('seat')->unsigned()->nullable()->default(0)->change();
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tables');
+        Schema::table('tables', function (Blueprint $table) {
+            //
+        });
     }
 };

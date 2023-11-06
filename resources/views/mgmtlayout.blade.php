@@ -9,7 +9,7 @@
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Sweetalert -->
+    <!-- Sweetalert 2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Custom -->
     <link href="/css/base.css" rel="stylesheet">
@@ -22,7 +22,7 @@
             --first-color: #ac1820;
             --first-color-light: #f9f4df;
             --body-font: Georgia, 'Times New Roman', serif;
-            --normal-font-size: .95rem;
+            --normal-font-size: 1rem;
             --z-fixed: 100;
         }
 
@@ -112,7 +112,6 @@
         }
 
         .nav_logo {
-            font-size: 1rem;
             padding: .5rem 0 .5rem .4rem;
             column-gap: .5rem;
             margin-bottom: 1rem;
@@ -165,6 +164,7 @@
             body {
                 margin: calc(var(--header-height) + 1rem) 0 0 0;
                 padding-left: calc(var(--nav-width) + 2rem);
+                padding-right: 2rem;
             }
 
             .header {
@@ -231,7 +231,7 @@
         </nav>
     </div>
 
-    <div>
+    <div id="l-content">
         <h4 class="fw-bold title-blue py-3">@yield('title')</h4>
 
         @yield('body')

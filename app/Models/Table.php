@@ -9,5 +9,5 @@ class Table extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $fillable = ['row', 'col', 'seat', 'status', 'qr_code'];
+    protected $fillable = ['row', 'col', 'seat', 'status'];
 }

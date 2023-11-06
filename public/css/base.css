@@ -173,6 +173,7 @@ div.body {
     color: inherit;
     background: #fff;
     border-radius: 5px;
+    font-size: var(--normal-font-size);
 }
 
 .table>thead {

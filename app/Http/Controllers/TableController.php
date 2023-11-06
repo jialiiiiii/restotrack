@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Table;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TableController extends Controller
 {
@@ -13,8 +15,20 @@ class TableController extends Controller
      */
     public function index(Request $request)
     {
-        $tables = Table::all();
+        $tables = Table::all()->sortBy(function ($table) {
+            return [$table->row, $table->col];
+        });
+
         return view('tables.index', compact('tables'));
+    }
+
+    public function arrange(Request $request)
+    {
+        $tables = Table::all()->sortBy(function ($table) {
+            return [$table->row, $table->col];
+        });
+
+        return view('tables.arrange', compact('tables'));
     }
 
     /**
@@ -32,7 +46,29 @@ class TableController extends Controller
      */
     public function store(Request $request)
     {
-        
+        try {
+            $tableData = $request->input('data');
+    
+            // Sort data
+            $sorted = collect($tableData)->sortBy(function ($item) {
+                // Get seat != 0 first, sort by row, then sort by col
+                return [$item['seat'] == 0, $item['row'], $item['col']];
+            })->values()->all();
+    
+            // Drop all data
+            Table::query()->delete();
+            DB::statement('ALTER TABLE tables AUTO_INCREMENT = 1');
+    
+            // Insert all data
+            foreach ($sorted as $data) {
+                Table::create($data);
+            }
+    
+            return response()->json(['message' => 'success']);
+            
+        } catch (QueryException $e) {
+            return response()->json(['error' => 'Error inserting data: ' . $e->getMessage()], 500);
+        }
     }
 
     /**

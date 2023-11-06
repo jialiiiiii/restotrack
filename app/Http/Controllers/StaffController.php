@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Staff;
 use App\Validation\FormValidation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 
 class StaffController extends Controller
