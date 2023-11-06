@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\MealController;
+use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\TableController;
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 
 // Test
 Route::get('/test', function () {
-    
+    phpinfo();
 });
 
 // Public
@@ -44,6 +45,7 @@ Route::get('/logout', [SessionController::class, 'logout']);
 // Staff
 Route::put('/meals/{id}/toggleAvailability', [MealController::class, 'toggleAvailability']);
 Route::resource('/meals', MealController::class);
+Route::get('/tables/qr', [QrCodeController::class, 'show']);
 Route::get('/tables/arrange', [TableController::class, 'arrange']);
 Route::resource('/tables', TableController::class);
 

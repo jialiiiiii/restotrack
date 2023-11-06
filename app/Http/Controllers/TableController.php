@@ -78,6 +78,8 @@ class TableController extends Controller
     public function show(Table $table)
     {
         
+
+        return view('tables.arrange', compact('tables'));
     }
 
     /**

@@ -169,7 +169,7 @@
         .l-toolbar {
             position: fixed;
             top: calc(var(--header-height) + 1rem);
-            right: -12%;
+            right: -150px;
             width: 150px;
             height: calc(100% - (var(--header-height) + 1rem));
             background-color: #764A3D;
@@ -194,7 +194,7 @@
 
         .l-delete {
             position: fixed;
-            top: calc(var(--header-height) + 5.5rem);
+            top: calc(var(--header-height) + 5rem);
             right: -20px;
             padding-right: 20px;
             width: 80px;
@@ -266,7 +266,7 @@
 
 @section('body')
     <div class="content" id="content-pd">
-        <div class="d-flex">
+        <div class="d-flex mb-4">
             <a href="/tables" class="btn btn-secondary" role="button">
                 <i class="fas fa-arrow-left"></i>&nbsp; Back to index
             </a>
@@ -628,15 +628,7 @@
                         },
                         error: function(error) {
                             // Handle errors
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Successful',
-                                text: 'Table updated successfully!',
-                                showCancelButton: true,
-                                cancelButtonText: 'Close',
-                                confirmButtonText: 'View',
-                                confirmButtonColor: '#3085d6',
-                            })
+                            console.error(error);
                         }
                     });
                 } else {
@@ -709,7 +701,7 @@
                 return tableData;
             }
 
-
+            
             //--------------------------------------
             // Toolbar
             //--------------------------------------
