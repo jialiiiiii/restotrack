@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('meals', function (Blueprint $table) {
+            // Change 'sales' column to not negative
             $table->double('sales')->unsigned()->change();
         });
     }

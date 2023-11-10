@@ -15,8 +15,12 @@ class SessionController extends Controller
 {
     protected $loginAttempts = 5;
 
-    public function login()
+    public function login(Request $request)
     {
+        if ($request->filled('from')) {
+            $request->session()->put('to', $request->input('from'));
+        }
+
         return view('login');
     }
 
@@ -35,7 +39,7 @@ class SessionController extends Controller
                 $message = 'ID and password do not match.';
             } else {
                 Auth::guard('staff')->login($staff);
-                $request->session()->regenerate();      
+                $request->session()->regenerate();
                 return redirect('/tables')->with('msg', 'loginSuccess');
             }
 
@@ -49,7 +53,7 @@ class SessionController extends Controller
             } else {
                 Auth::guard('customer')->login($customer);
                 $request->session()->regenerate();
-                return redirect('/menu')->with('msg', 'loginSuccess');
+                return redirect('/home')->with('msg', 'loginSuccess');
             }
 
         } else {
@@ -93,13 +97,17 @@ class SessionController extends Controller
             return redirect()->intended('/home')->with('msg', 'loginFail');
         }
     }
-    public function logout() {
+    public function logout(Request $request)
+    {
         if (auth()->guard('customer')->check()) {
             auth()->guard('customer')->logout();
         } elseif (auth()->guard('staff')->check()) {
             auth()->guard('staff')->logout();
         }
-    
+
+        // Regenerate session ID and remove all data
+        $request->session()->invalidate();
+
         return redirect()->intended('/home')->with('msg', 'logoutSuccess');
     }
 }

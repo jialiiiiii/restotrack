@@ -40,6 +40,8 @@ class CustomerController extends Controller
                     $c->$field = $request->$field;
                 }
             }
+
+            $c->save();
             return redirect('/customers/profile')->with('msg', 'updateSuccess');
         } else {
             return redirect('/customers/profile')->with('msg', 'updateNoChanges');
@@ -191,7 +193,7 @@ class CustomerController extends Controller
         $name = $request->name;
         $password = Hash::make($request->password);
 
-        // send email
+        // Send email
         MailController::verifyEmail($email, $token);
 
         $customerData = [
@@ -200,7 +202,7 @@ class CustomerController extends Controller
             'password' => $password,
         ];
 
-        Cache::put($token, $customerData, now()->addMinutes(10)); // for customer
-        Cache::put($email, $token, now()->addMinutes(10)); // for staff
+        Cache::put($token, $customerData, now()->addMinutes(10));   // For customer
+        Cache::put($email, $token, now()->addMinutes(10));          // For staff
     }
 }

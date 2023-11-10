@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('customers', function (Blueprint $table) {
+            // Change 'point' column with to default 0
             $table->integer('point')->default('0')->change();
         });
     }

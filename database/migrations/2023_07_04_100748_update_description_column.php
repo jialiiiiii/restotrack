@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('meals', function (Blueprint $table) {
+            // Change 'description' column to length 500
             $table->string('description', 500)->change();
         });
     }

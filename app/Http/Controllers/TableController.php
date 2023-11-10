@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ChangesNotification;
 use App\Models\Table;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -9,6 +10,14 @@ use Illuminate\Support\Facades\DB;
 
 class TableController extends Controller
 {
+    public function track(Request $request) {
+        $tables = Table::all()->sortBy(function ($table) {
+            return [$table->row, $table->col];
+        });
+
+        return view('tables.track', compact('tables'));
+    }
+
     /**
      * Display a listing of the resource.
      * GET /model
@@ -63,7 +72,10 @@ class TableController extends Controller
             foreach ($sorted as $data) {
                 Table::create($data);
             }
-    
+            
+            // Inform track page
+            event(new ChangesNotification('Table data changed'));
+
             return response()->json(['message' => 'success']);
             
         } catch (QueryException $e) {
@@ -75,11 +87,10 @@ class TableController extends Controller
      * Display the specified resource.
      * GET /model/{id}
      */
-    public function show(Table $table)
+    public function show(Table $table, QrCodeController $qrCodeController)
     {
-        
-
-        return view('tables.arrange', compact('tables'));
+        $data = $qrCodeController->show($table->id);
+        return view('tables.show', ['t' => $table, 'qr' => $data]);
     }
 
     /**

@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tables', function (Blueprint $table) {
+            // Change 'seat' column to default 0
             $table->integer('seat')->unsigned()->default(0)->change();
         });
     }

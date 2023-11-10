@@ -20,4 +20,5 @@ class Meal extends Model
     {
         return $query->where('available', true);
     }
+
 }

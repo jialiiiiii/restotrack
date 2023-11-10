@@ -4,76 +4,6 @@
 @section('head')
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     <style>
-        span#table-count {
-            background: #1F579C;
-            color: #fff;
-            cursor: context-menu;
-            user-select: auto;
-        }
-
-        table {
-            width: 0 !important;
-            margin-left: auto;
-            margin-right: auto;
-            border-collapse: separate;
-            border-spacing: 50px;
-            background: #adbac9 !important;
-        }
-
-        td {
-            height: 150px !important;
-            position: relative;
-            cursor: pointer;
-            border: none;
-            background: #fff !important;
-            border-width: 3px !important;
-            border-style: solid;
-            border-color: transparent;
-            transition: border-color 0.3s ease;
-        }
-
-        td.item-empty {
-            background: #ddd !important;
-        }
-
-        img.item-img {
-            width: 125px;
-            background: transparent;
-            /* margin-bottom: 1rem; */
-        }
-
-        div.status span {
-            position: absolute;
-            right: -10px;
-            bottom: -10px;
-            height: 30px;
-            width: 30px;
-            border-radius: 50%;
-            display: inline-block;
-            border-width: 3px;
-            border-style: solid;
-        }
-
-        span.green {
-            background: #55f340;
-            border-color: #23d30c;
-        }
-
-        span.yellow {
-            background: #fad53b;
-            border-color: #dcb619;
-        }
-
-        span.red {
-            background: #ff4444;
-            border-color: #eb1515;
-        }
-
-        span.gray {
-            background: #b9b9b9;
-            border-color: #9c9c9c;
-        }
-
         input[type="text"]:disabled {
             cursor: pointer;
             pointer-events: none;
@@ -102,6 +32,11 @@
 
         div.add.visible:hover {
             opacity: 1;
+        }
+
+        div.add.disabled {
+            cursor: not-allowed;
+            filter: opacity(0.5);
         }
 
         div.add.top {
@@ -278,24 +213,6 @@
         </div>
 
         @php
-            $status = ['occupied', 'available', 'reserved', 'out of service'];
-
-            function getColorForStatus($status)
-            {
-                switch ($status) {
-                    case 'occupied':
-                        return 'red';
-                    case 'available':
-                        return 'green';
-                    case 'reserved':
-                        return 'yellow';
-                    case 'out of service':
-                        return 'gray';
-                    default:
-                        return '';
-                }
-            }
-
             $row = 0;
             $tableCounter = 0;
         @endphp
@@ -307,7 +224,7 @@
                 @foreach ($tables as $table)
                     @php
                         // Check if status is predefined
-                        $is_predefined = in_array($table->status, $status);
+                        $is_predefined = in_array($table->status, getStatus());
                     @endphp
 
                     @if ($table->row > $row)
@@ -335,7 +252,7 @@
                         <div class="minus left"><i class="fas fa-minus-circle"></i></div>
                         <div class="minus right"><i class="fas fa-minus-circle"></i></div>
 
-                        <div class="d-flex flex-column">
+                        <div class="d-flex justify-content-center">
                             {{-- Show seat no only when status is predefined as above --}}
 
                             <div class="image">
@@ -526,7 +443,6 @@
             deleteLabel.classList.add('hovered');
         });
 
-
         deleteLabel.addEventListener('dragover', function() {
             deleteLabel.classList.add('hovered');
         });
@@ -625,6 +541,8 @@
                                     window.location.href = '/tables';
                                 }
                             })
+
+                            originalData = tableData;
                         },
                         error: function(error) {
                             // Handle errors
@@ -683,9 +601,8 @@
                             status = $(this).find('input').val();
                             // Not more than 30 characters
                             status = status?.slice(0, 30);
-                            // First letter capital, others small
-                            status = status?.charAt(0).toUpperCase() + status?.slice(1)
-                                .toLowerCase();
+                            // All small letters
+                            status = status = status?.toLowerCase();
                     }
 
                     var data = {
@@ -712,18 +629,18 @@
                     label = document.getElementById(labelId),
                     label2 = document.getElementById(label2Id)
 
-                // validate that all variables exist
+                // Validate that all variables exist
                 if (toggle && nav && bodypd && label && label2) {
                     toggle.addEventListener('click', () => {
-                        // show navbar
+                        // Show navbar
                         nav.classList.toggle('showToolbar')
-                        // change icon
+                        // Change icon
                         toggle.classList.toggle('fa-times')
-                        // add padding to body
+                        // Add padding to body
                         bodypd.classList.toggle('content-pd')
-                        // move label
+                        // Move label
                         label.classList.toggle('moveLabel')
-                        // move lavel 2
+                        // Move lavel 2
                         label2.classList.toggle('moveLabel')
                     })
                 }
@@ -938,7 +855,7 @@
 
             // Define once
             const emptyTd = $(getEmptyTd());
-            const inputWidth = $('td').width();
+            const inputWidth = $('td:has(div.image img)').width();
             const maxRow = maxCol = 10;
 
             // Ensure empty item width
@@ -954,14 +871,19 @@
                 $('div.add.left').off('click');
                 $('div.add.right').off('click');
 
+                $('div.add').removeClass('disabled');
                 if ($('tr').length >= maxRow) {
-                    $('div.add.top, div.add.bottom').hide();
+                    $('div.add.top, div.add.bottom').addClass('disabled');
                 } else if ($('tr:first').find('td').length >= maxCol) {
-                    $('div.add.left, div.add.right').hide();
+                    $('div.add.left, div.add.right').addClass('disabled');
                 }
 
                 // Top button
                 $('div.add.top').click(function() {
+                    if ($(this).hasClass('disabled')) {
+                        return;
+                    }
+
                     var tr = item.parents('tr');
                     var newRow = $('<tr></tr>');
 
@@ -971,14 +893,14 @@
                     });
 
                     tr.before(newRow);
-
-                    if ($('tr').length >= maxRow) {
-                        $('div.add.top, div.add.bottom').hide();
-                    }
                 });
 
                 // Bottom button
                 $('div.add.bottom').click(function() {
+                    if ($(this).hasClass('disabled')) {
+                        return;
+                    }
+
                     var tr = item.parents('tr');
                     var newRow = $('<tr></tr>');
 
@@ -988,14 +910,14 @@
                     });
 
                     tr.after(newRow);
-
-                    if ($('tr').length >= maxRow) {
-                        $('div.add.top, div.add.bottom').hide();
-                    }
                 });
 
                 // Left button
                 $('div.add.left').click(function() {
+                    if ($(this).hasClass('disabled')) {
+                        return;
+                    }
+
                     var index = item.index();
 
                     $('tr').each(function() {
@@ -1003,14 +925,14 @@
                         clonedTd.find('div.status').width(inputWidth);
                         $(this).find('td').eq(index).before(clonedTd);
                     });
-
-                    if ($('tr:first').find('td').length >= maxCol) {
-                        $('div.add.left, div.add.right').hide();
-                    }
                 });
 
                 // Right button
                 $('div.add.right').click(function() {
+                    if ($(this).hasClass('disabled')) {
+                        return;
+                    }
+
                     var index = item.index();
 
                     $('tr').each(function() {
@@ -1018,10 +940,6 @@
                         clonedTd.find('div.status').width(inputWidth);
                         $(this).find('td').eq(index).after(clonedTd);
                     });
-
-                    if ($('tr:first').find('td').length >= maxCol) {
-                        $('div.add.left, div.add.right').hide();
-                    }
                 });
             }
 

@@ -1,28 +1,6 @@
 @extends('homelayout')
 @section('title', 'Register')
 
-@section('head')
-    <style>
-        .divider:after,
-        .divider:before {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: #c4b4a4;
-        }
-
-        .btn-danger {
-            background: #dd4b39;
-            border-color: #dd4b39;
-        }
-
-        .btn-danger:hover {
-            background: #e44f3b;
-            border-color: #e44f3b;
-        }
-    </style>
-@endsection
-
 @section('body')
     @if (session()->has('msg') && session()->get('msg') == 'registerSuccess')
         <script>

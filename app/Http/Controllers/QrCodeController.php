@@ -2,35 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class QrCodeController extends Controller
 {
-    public function show()
+    private function generateQrCode($tableID, $size = 200)
     {
-        $data = QrCode::size(512)
+        return QrCode::size($size)
             ->format('png')
-            ->merge('/public/img/logo.png')
-            ->errorCorrection('M')
-            ->generate(
-                'https://twitter.com/HarryKir',
-            );
-
-        return response($data)->header('Content-type', 'image/png');
+            ->merge('/public/img/logo.png', 0.5)
+            ->errorCorrection('Q')
+            ->generate('http://127.0.0.1:8000/menu?table=' . $tableID);
     }
 
-    public function download()
+    public function show($tableID)
     {
+        return $this->generateQrCode($tableID);
+    }
+
+    public function download(Request $request)
+    {
+        $tableID = $request->table;
+        $qrCode = $this->generateQrCode($tableID, 512);
+
         return response()->streamDownload(
-            function () {
-                echo QrCode::size(200)
-                    ->format('png')
-                    ->generate('https://harrk.dev');
+            function () use ($qrCode) {
+                echo $qrCode;
             },
-            'qr-code.png',
+            'qr-code-table-' . $tableID . '.png',
             [
                 'Content-Type' => 'image/png',
             ]
         );
     }
+
 }

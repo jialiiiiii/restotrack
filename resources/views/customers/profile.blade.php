@@ -1,10 +1,6 @@
 @extends('homelayout')
 @section('title', 'Profile')
 
-@section('head')
-
-@endsection
-
 @section('body')
     @if (session()->has('msg'))
         <script>
@@ -76,7 +72,7 @@
                         @enderror
                     </div>
                 </div>
-                <div class="text-center mt-5">
+                <div class="text-center mt-5 mb-4">
                     <button id="update" class="btn btn-primary w-100">Update</button>
                     <button id="submit" class="btn btn-primary w-100" type="submit">Confirm Changes</button>
                 </div>
@@ -93,6 +89,11 @@
                 $('#name, #password, #confirmPassword').prop('disabled', false);
                 $('#submit').show();
                 $(this).hide();
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             });
 
             @if ($errors->any())

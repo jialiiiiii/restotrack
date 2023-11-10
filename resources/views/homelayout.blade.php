@@ -23,7 +23,7 @@
     <script src="/js/base.js"></script>
 
     <style>
-        /* header */
+        /* Header */
         .navbar {
             background-color: #ac1820;
         }
@@ -88,7 +88,7 @@
             vertical-align: middle;
         }
 
-        /* footer */
+        /* Footer */
         footer {
             background-color: #ac1820;
             color: #f9f4df;
@@ -98,7 +98,7 @@
         footer .copyright {
             text-align: center;
             padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         footer .social-links {
@@ -190,17 +190,17 @@
                         <a class="nav-link {{ $page === 'menu' ? 'active' : '' }}" href="/menu">Menu</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ $page === 'order' ? 'active' : '' }}" href="/">Order</a>
+                        <a class="nav-link {{ $page === 'reserve' ? 'active' : '' }}" href="/">Reserve</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ $page === 'track' ? 'active' : '' }}" href="/">Track</a>
+                        <a class="nav-link {{ $page === 'track' ? 'active' : '' }}" href="/track">Track</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav me-3 my-2 my-lg-0" style="--bs-scroll-height: 100px;">
                     @if (auth()->guard('customer')->check())
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
-                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                data-bs-toggle="myDropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="underline">Hi,
                                     {{ auth()->guard('customer')->user()->name ?? 'Guest' }}</span>
                             </a>
@@ -224,8 +224,6 @@
     </nav>
 
     @yield('body')
-
-    {{--  --}}
 
     <footer>
         <div class="container social-links">
@@ -264,14 +262,12 @@
                     icon: 'success',
                     title: 'Welcome',
                     text: 'You have logged in successfully!',
-                    showCancelButton: true,
-                    cancelButtonText: 'Close',
-                    confirmButtonText: 'Start Order',
-                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3085d6'
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = '/menu';
-                    }
+                    @if (session()->has('to'))
+                        window.location.href = '/{{ session()->pull('to') }}';
+                    @endif
                 })
             @elseif (session()->get('msg') == 'loginFail')
                 Swal.fire({
@@ -282,6 +278,7 @@
                     cancelButtonText: 'Close',
                     confirmButtonText: 'Try Again',
                     confirmButtonColor: '#3085d6',
+                    reverseButtons: true
                 }).then((result) => {
                     if (result.isConfirmed) {
                         window.location.href = '/login';

@@ -1,13 +1,13 @@
 @extends('homelayout')
 
 @section('head')
-    <!-- aos -->
+    <!-- AOS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <!-- swiper -->
+    <!-- Swiper -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.7/swiper-bundle.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.7/swiper-bundle.min.js"></script>
-    <!-- glightbox -->
+    <!-- Glightbox -->
     <link href="https://cdn.jsdelivr.net/npm/glightbox@3.2.0/dist/css/glightbox.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/glightbox@3.2.0/dist/js/glightbox.min.js"></script>
 
@@ -19,7 +19,7 @@
             padding: 50px 0;
         }
 
-        /* hero section */
+        /* Hero section */
         .hero {
             width: 100%;
             background-size: cover;
@@ -65,7 +65,7 @@
             }
         }
 
-        /* about section */
+        /* About section */
         .about .about-img {
             min-height: 700px;
         }
@@ -107,7 +107,7 @@
             color: #ac1820;
         }
 
-        /* gallery section */
+        /* Gallery section */
         .gallery {
             overflow: hidden;
         }
@@ -155,7 +155,7 @@
             }
         }
 
-        /* contact section */
+        /* Contact section */
         .contact .info-item {
             background: #fbeee0;
             padding: 30px;
@@ -348,19 +348,6 @@
             class="fas fa-arrow-up"></i></a>
 
     <script>
-        const scrollTop = document.querySelector('.scroll-top');
-        if (scrollTop) {
-            const togglescrollTop = function() {
-                window.scrollY > 100 ? scrollTop.classList.add('active') : scrollTop.classList.remove('active');
-            }
-            window.addEventListener('load', togglescrollTop);
-            document.addEventListener('scroll', togglescrollTop);
-            scrollTop.addEventListener('click', window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            }));
-        }
-
         function aos_init() {
             AOS.init({
                 duration: 1000,
@@ -369,6 +356,7 @@
                 mirror: false
             });
         }
+
         window.addEventListener('load', () => {
             aos_init();
         });

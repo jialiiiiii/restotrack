@@ -1,25 +1,6 @@
 @extends('mgmtlayout')
 @section('title', 'Edit Meal')
 
-@section('head')
-    <style>
-        #imageContainer {
-            position: relative;
-            width: 250px;
-            height: 250px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        #imageContainer img {
-            cursor: pointer;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-    </style>
-@endsection
-
 @section('body')
     @if (session()->has('msg') && session()->has('id'))
         <script>
@@ -132,29 +113,4 @@
             </div>
         </form>
     </div>
-
-    <script>
-        $(function() {
-            $("#imagePreview").click(function() {
-                $("#mealImage").trigger("click");
-            });
-
-            $("#mealImage").change(function() {
-                const file = this.files[0];
-                const imagePreview = $("#imagePreview");
-
-                if (file) {
-                    const reader = new FileReader();
-
-                    reader.onload = function(e) {
-                        imagePreview.attr("src", e.target.result);
-                    };
-
-                    reader.readAsDataURL(file);
-                } else {
-                    imagePreview.attr("src", "/img/default-meal.png");
-                }
-            });
-        });
-    </script>
 @endsection

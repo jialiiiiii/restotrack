@@ -3,6 +3,7 @@
 
 @section('head')
     <style>
+        /* Menu & search */
         .card {
             background: #fbeee0;
             border: transparent;
@@ -67,6 +68,79 @@
                 width: 220px !important;
             }
         }
+
+        /* Add to cart */
+        .cart-btn {
+            position: fixed;
+            left: 15px;
+            bottom: 15px;
+            z-index: 2;
+            background: #764a3d;
+            width: 60px;
+            height: 60px;
+            border-radius: 50px;
+            transition: all 0.4s;
+            text-decoration: none;
+            box-shadow: 0 3px 6px rgba(118, 74, 61, 0.16), 0 3px 6px rgba(118, 74, 61, 0.23);
+        }
+
+        .cart-btn:hover {
+            background: #7a5145;
+        }
+
+        .cart-btn i {
+            font-size: 25px;
+            color: #f9f4df;
+            line-height: 0;
+        }
+
+        .cart-text {
+            position: fixed;
+            left: 31px;
+            bottom: 31px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f6c329;
+            color: #fff;
+            border-radius: 50%;
+            font-weight: bold;
+            width: 28px;
+            height: 28px;
+            z-index: 3;
+            box-shadow: 0 3px 6px rgba(255, 171, 0, 0.16), 0 3px 6px rgba(255, 171, 0, 0.23);
+            transform: scale(0);
+        }
+
+        .cart-text.move {
+            left: 58px;
+            bottom: 55px;
+            transition: .1s linear;
+            transform: scale(1);
+        }
+
+        .circle {
+            content: "";
+            display: inline;
+            position: absolute;
+            width: 38px;
+            height: 38px;
+            margin-left: 38px;
+            margin-top: -19px;
+            background: #2664b1;
+            z-index: -1;
+        }
+
+        .circle.move {
+            transform: rotate(-180deg);
+            z-index: 1;
+            transition: .2s linear;
+        }
+
+        .circle.size {
+            border-radius: 50%;
+            transition: .2s linear;
+        }
     </style>
 @endsection
 
@@ -125,7 +199,11 @@
                                     </p>
                                 </div>
                                 <div class="card-footer">
-                                    <button class="btn btn-primary">Add to Cart</button>
+                                    @if ($addToCart)
+                                        <span class="circle"></span>
+                                        <button class="add-btn btn btn-primary" id="{{ $m->id }}">Add to
+                                            Cart</button>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -141,7 +219,7 @@
             </div>
 
             @if (count($meals) > 0)
-                <div class="custom-pagination w-100 mt-4">
+                <div class="custom-pagination w-100 my-4">
                     {{ $meals->links('pagination::bootstrap-5') }}
                 </div>
             @endif
@@ -151,23 +229,192 @@
     <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i
             class="fas fa-arrow-up"></i></a>
 
+    @if ($addToCart)
+        <div class="cart">
+            <a href="#" class="cart-btn d-flex align-items-center justify-content-center"><i
+                    class="fas fa-shopping-cart"></i></a>
+            <div class="cart-text">0</div>
+        </div>
+    @endif
 
     <script>
-        const scrollTop = document.querySelector('.scroll-top');
-        if (scrollTop) {
-            const togglescrollTop = function() {
-                window.scrollY > 100 ? scrollTop.classList.add('active') : scrollTop.classList.remove('active');
-            }
-            window.addEventListener('load', togglescrollTop);
-            document.addEventListener('scroll', togglescrollTop);
-            scrollTop.addEventListener('click', window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            }));
-        }
-
         $(document).ready(function() {
+            //--------------------------------------
+            // Add to cart
+            //--------------------------------------   
+            @if ($addToCart)
+                // Get user id and type
+                getCartInfo();
 
+                // Enable add to cart
+                attachClickHandler();
+            @endif
+
+            function attachClickHandler() {
+                var count = {{ $cartQuantity }};
+                if (count > 0) {
+                    $(".cart-text").text(count);
+                    $(".cart-text").addClass("move");
+                }
+
+                var top = $('.cart-btn').offset().top - $(window).scrollTop();
+                var left = $('.cart-btn').offset().left;
+
+                // Unbind the previous click event
+                $('.add-btn').off('click');
+
+                $(".add-btn").click(function(event) {
+                    // Animation
+                    var elem = $(this).closest('.card-footer').find('.circle');
+
+                    elem.addClass("size");
+                    setTimeout(function() {
+                        elem.addClass("move");
+                        var x = -(((elem.offset().left - left) / 2) - left) + left - 5;
+                        var y = (top - (elem.offset().top - $(window).scrollTop())) / 2 + 20;
+                        elem.css('transform-origin', `${x}px ${y}px`);
+                    }, 200);
+                    setTimeout(function() {
+                        elem.removeClass("move");
+                        elem.css('transform-origin', 'initial');
+                        elem.removeClass("size");
+                    }, 600);
+
+                    // Post data
+                    var id = $(this).attr('id');
+                    $.ajax({
+                        type: 'POST',
+                        url: '/carts',
+                        data: {
+                            mealId: id,
+                            _token: '{{ csrf_token() }}',
+                        },
+                        success: function(response) {
+                            // Handle response
+                            if (response.message == 'success') {
+                                // Trigger reload
+                                filterMeals();
+                            }
+                        },
+                        error: function(error) {
+                            // Handle errors
+                            console.error(error);
+                        }
+                    });
+                });
+            }
+
+            //--------------------------------------
+            // Get user id and order type
+            //--------------------------------------  
+            function getCartInfo() {
+                const Queue = Swal.mixin({
+                    progressSteps: ['1', '2'],
+                    allowOutsideClick: false,
+                    showClass: {
+                        backdrop: 'swal2-noanimation'
+                    },
+                    hideClass: {
+                        backdrop: 'swal2-noanimation'
+                    },
+                });
+
+                var name = '';
+                var id = '';
+                var user = "{{ session()->get('cartUser') }}";
+                var type = "{{ session()->get('cartType') }}";
+
+                (async () => {
+                    if (user == '') {
+                        @if (auth()->guard('customer')->check())
+                            name = "{{ auth()->guard('customer')->user()->name }}";
+                            id = "{{ auth()->guard('customer')->user()->id }}";
+                        @else
+                            name = 'Guest';
+                            id = "{{ session()->getId() }}";
+                        @endif
+
+                        await Queue.fire({
+                            currentProgressStep: 0,
+                            title: 'Hello',
+                            text: 'Please choose how you want to proceed',
+                            showCancelButton: true,
+                            cancelButtonText: 'Continue as Guest',
+                            confirmButtonText: (name === 'Guest') ? 'Login Now' : 'Continue as ' +
+                                name,
+                            confirmButtonColor: '#3085d6',
+                            reverseButtons: true,
+                            preConfirm: () => {
+                                return new Promise((resolve) => {
+                                    if (name === 'Guest') {
+                                        window.location.href = '/login?from=menu';
+                                        resolve(false);
+                                    } else {
+                                        resolve();
+                                    }
+                                });
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                user = id;
+                            } else if (result.isDismissed) {
+                                user = 'Guest';
+                            }
+
+                            // Set session for cartUser
+                            $.ajax({
+                                type: 'POST',
+                                url: '/carts/session',
+                                data: {
+                                    user: user,
+                                    _token: '{{ csrf_token() }}',
+                                }
+                            });
+                        })
+                    }
+
+                    if (type == '') {
+                        await Queue.fire({
+                            currentProgressStep: 1,
+                            title: 'Hello',
+                            text: 'Please select your order type',
+                            showCancelButton: true,
+                            cancelButtonText: 'Takeaway',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Dine-in',
+                            confirmButtonColor: '#3085d6',
+                            reverseButtons: true,
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                type = 'dine-in';
+                            } else if (result.isDismissed) {
+                                type = 'takeaway';
+                            }
+
+                            // Set session for cartType
+                            $.ajax({
+                                type: 'POST',
+                                url: '/carts/session',
+                                data: {
+                                    type: type,
+                                    _token: '{{ csrf_token() }}',
+                                },
+                                success: function(response) {
+                                    // Handle response
+                                    if (response.message == 'success') {
+                                        // Trigger reload
+                                        filterMeals();
+                                    }
+                                }
+                            });
+                        })
+                    }
+                })();
+            }
+
+            //--------------------------------------
+            // Display & search menu
+            //--------------------------------------
             attachEventHandlers();
 
             function filterMeals() {
@@ -184,14 +431,17 @@
                         query: inputQuery,
                     },
                     success: function(response) {
-                        var updated = $(response).find('#result');
-                        $('#result').html(updated.html());
+                        $('body').html(response);
 
                         $('#categorySelect').val(selectedCategory);
                         $('#sortSelect').val(sortSelect);
                         $('#search-menu').val(inputQuery);
 
                         attachEventHandlers();
+
+                        @if ($addToCart)
+                            attachClickHandler();
+                        @endif
                     },
                     error: function(xhr, status, error) {
                         console.log(xhr.responseText);
@@ -228,20 +478,30 @@
                 $('#cross-icon').on('click', function() {
                     const searchInput = $('input[name="search-menu"]')
                     const crossIcon = $(this);
-                    
+
                     searchInput.val('');
-                    crossIcon.hide();
-                    searchInput.css('padding-right', '');
+                    // Trigger reload
+                    filterMeals();
+                });
+
+                if ($('input[name="search-menu"]').val() !== '') {
+                    $('#cross-icon').show();
+                }
+
+                $('input[name="search-menu"]').focus(function() {
+                    // Enable the keydown event
+                    $(window).on('keydown', function(event) {
+                        if (event.keyCode == 13) {
+                            event.preventDefault();
+                            filterMeals();
+                            return false;
+                        }
+                    });
+                }).blur(function() {
+                    // Disable the keydown event
+                    $(window).off('keydown');
                 });
             }
-
-            $(window).keydown(function(event) {
-                if (event.keyCode == 13) {
-                    event.preventDefault();
-                    filterMeals();
-                    return false;
-                }
-            });
 
         });
     </script>

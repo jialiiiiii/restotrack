@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('customers', function (Blueprint $table) {
+            // Change 'password' column to nullable
             $table->string('password')->nullable()->change();
         });
     }

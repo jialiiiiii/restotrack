@@ -23,8 +23,7 @@ class UpdateTablesTable extends Migration
     public function down(): void
     {
         Schema::table('tables', function (Blueprint $table) {
-            // If you need to rollback, put the rollback logic here
-            $table->string('status')->change();
+            
         });
     }
 }

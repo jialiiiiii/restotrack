@@ -11,6 +11,7 @@ return new class extends Migration {
     public function up() : void
     {
         Schema::table('meals', function (Blueprint $table) {
+            // Change columns with default values
             $table->double('sales')->unsigned()->default(0)->change();
             $table->integer('sold')->unsigned()->default(0)->change();
             $table->boolean('available')->default(true)->change();

@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('tables', function (Blueprint $table) {
-            $table->integer('seat')->unsigned()->nullable()->default(0)->change();
+        Schema::table('Carts', function (Blueprint $table) {
+            $table->string('user_id')->change();
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('tables', function (Blueprint $table) {
-            //
+        Schema::table('Carts', function (Blueprint $table) {
+            $table->integer('user_id')->unsigned()->change();
         });
     }
 };

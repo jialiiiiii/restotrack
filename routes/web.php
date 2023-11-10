@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\MealController;
 use App\Http\Controllers\QrCodeController;
@@ -21,7 +22,9 @@ use Illuminate\Support\Facades\Route;
 
 // Test
 Route::get('/test', function () {
-    phpinfo();
+    $quantity = \App\Models\Cart::where('meal_id', '1')->value('quantity') ?? 0;
+    $quantity = '1';
+    dd($quantity + 1);
 });
 
 // Public
@@ -29,6 +32,10 @@ Route::get('/home', function () {
     return view('index');
 });
 Route::get('/menu', [MealController::class, 'menu']);
+Route::get('/track', [TableController::class, 'track']);
+
+Route::post('/carts/session', [CartController::class, 'session']);
+Route::resource('/carts', CartController::class);
 
 Route::get('/customers/verify', [CustomerController::class, 'verify']);
 Route::get('/customers/register', [CustomerController::class, 'register']);
@@ -45,7 +52,7 @@ Route::get('/logout', [SessionController::class, 'logout']);
 // Staff
 Route::put('/meals/{id}/toggleAvailability', [MealController::class, 'toggleAvailability']);
 Route::resource('/meals', MealController::class);
-Route::get('/tables/qr', [QrCodeController::class, 'show']);
+Route::get('/tables/qr', [QrCodeController::class, 'download']);
 Route::get('/tables/arrange', [TableController::class, 'arrange']);
 Route::resource('/tables', TableController::class);
 

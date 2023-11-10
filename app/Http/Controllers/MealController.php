@@ -2,16 +2,43 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\Meal;
+use App\Models\Table;
 use App\Validation\FormValidation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 use Intervention\Image\Facades\Image;
 
 class MealController extends Controller
 {
     public function menu(Request $request)
     {
+        $addToCart = false;
+        $cartQuantity = 0;
+
+        if ( ($request->filled('table') && is_numeric($request->input('table'))) || $request->session()->has("cartTable")) {
+
+            // Table
+            $tid = $request->input('table') ?? $request->session()->get("cartTable");
+            $tableResult = Table::where('id', $tid)->exists();
+
+            if ($tableResult) {
+                $addToCart = true;
+                $request->session()->put("cartTable", $tid);
+            }
+
+            // Cart
+            if ($request->session()->exists('cartUser')) {
+                $uid = $request->session()->get('cartUser');
+
+                $cartResult = Cart::where('user_id', $uid)->sum('quantity');
+
+                $cartQuantity = $cartResult;
+            }
+        }
+
+        $resetPage = false;
+
         $meals = Meal::notDeleted()->isAvailable();
 
         $categories = Meal::distinct('category')->pluck('category')->toArray();
@@ -22,6 +49,7 @@ class MealController extends Controller
 
         if ($category && $category !== 'all') {
             $meals = $meals->where('category', '=', $category);
+            $resetPage = true;
         }
 
         if ($sort == 'old-new') {
@@ -43,10 +71,12 @@ class MealController extends Controller
                             ->orWhereRaw('(price * (100 - sales) / 100) = ?', [$query]);
                     });
             });
+            $resetPage = true;
         }
 
-        $meals = $meals->paginate(20);
-        return view('meals.menu', compact('meals', 'categories', 'query'));
+        $meals = $resetPage ? $meals->paginate(20, ['*'], 1) : $meals->paginate(20);
+
+        return view('meals.menu', compact('meals', 'categories', 'query', 'addToCart', 'cartQuantity'));
     }
 
     public function toggleAvailability($id)
