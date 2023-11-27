@@ -139,7 +139,7 @@
             width: 1.5rem;
         }
 
-        .show {
+        #nav-bar.show {
             left: 0;
         }
 
@@ -177,7 +177,7 @@
                 padding: .2rem .7rem 0 0;
             }
 
-            .show {
+            #nav-bar.show {
                 width: calc(var(--nav-width) + 138px);
             }
 
@@ -211,21 +211,23 @@
                     <a href="/orders" class="nav_link {{ Request::is('order*') ? 'active' : '' }}">
                         <i class="fas fa-list-ul nav_icon"></i> <span class="nav_name">Orders</span>
                     </a>
-                    <a href="/meals" class="nav_link {{ Request::is('meal*') ? 'active' : '' }}">
-                        <i class="fas fa-utensils nav_icon"></i> <span class="nav_name">Meals</span>
-                    </a>
                     <a href="/reservations" class="nav_link {{ Request::is('reservation*') ? 'active' : '' }}">
                         <i class="fas fa-calendar-check nav_icon"></i> <span class="nav_name">Reservations</span>
                     </a>
-                    <a href="/customers" class="nav_link {{ Request::is('customer*') ? 'active' : '' }}">
-                        <i class="fas fa-user nav_icon"></i></i> <span class="nav_name">Customers</span>
+                    <a href="/meals" class="nav_link {{ Request::is('meal*') ? 'active' : '' }}">
+                        <i class="fas fa-utensils nav_icon"></i> <span class="nav_name">Meals</span>
                     </a>
-                    <a href="/staff" class="nav_link {{ Request::is('staff*') ? 'active' : '' }}">
-                        <i class="fas fa-user-cog nav_icon"></i> <span class="nav_name">Staff</span>
-                    </a>
+                    @if (auth()->guard('staff')->user()->hasRole('admin'))
+                        <a href="/customers" class="nav_link {{ Request::is('customer*') ? 'active' : '' }}">
+                            <i class="fas fa-user nav_icon"></i></i> <span class="nav_name">Customers</span>
+                        </a>
+                        <a href="/staff" class="nav_link {{ Request::is('staff*') ? 'active' : '' }}">
+                            <i class="fas fa-user-cog nav_icon"></i> <span class="nav_name">Staff</span>
+                        </a>
+                    @endif
                 </div>
             </div>
-            <a href="#" class="nav_link">
+            <a href="/logout" class="nav_link">
                 <i class="fas fa-sign-out-alt nav_icon"></i> <span class="nav_name">Sign Out</span>
             </a>
         </nav>
@@ -236,7 +238,6 @@
 
         @yield('body')
     </div>
-
 </body>
 
 <script>

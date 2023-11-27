@@ -63,12 +63,6 @@
             }
         }
 
-        @media only screen and (min-width: 1025px) {
-            .img-fluid {
-                width: 220px !important;
-            }
-        }
-
         /* Add to cart */
         .cart-btn {
             position: fixed;
@@ -210,7 +204,7 @@
                     @endforeach
                 @else
                     <div class="col-12 mx-auto my-5 d-flex flex-column align-items-center">
-                        <img class="img-fluid w-25" src="/img/empty-result.png" alt="Empty Result" />
+                        <img class="img-empty w-25" src="/img/empty-search.png" alt="Empty Search" />
                         <div class="mt-4">
                             There is no matching results.
                         </div>
@@ -231,7 +225,7 @@
 
     @if ($addToCart)
         <div class="cart">
-            <a href="#" class="cart-btn d-flex align-items-center justify-content-center"><i
+            <a href="/carts" class="cart-btn d-flex align-items-center justify-content-center"><i
                     class="fas fa-shopping-cart"></i></a>
             <div class="cart-text">0</div>
         </div>
@@ -243,14 +237,12 @@
             // Add to cart
             //--------------------------------------   
             @if ($addToCart)
-                // Get user id and type
-                getCartInfo();
 
-                // Enable add to cart
-                attachClickHandler();
-            @endif
+                @if (session()->has('cartTable'))
+                    // Get user and type
+                    getCartInfo();
+                @endif
 
-            function attachClickHandler() {
                 var count = {{ $cartQuantity }};
                 if (count > 0) {
                     $(".cart-text").text(count);
@@ -260,10 +252,7 @@
                 var top = $('.cart-btn').offset().top - $(window).scrollTop();
                 var left = $('.cart-btn').offset().left;
 
-                // Unbind the previous click event
-                $('.add-btn').off('click');
-
-                $(".add-btn").click(function(event) {
+                $(".add-btn").one('click', function(event) {
                     // Animation
                     var elem = $(this).closest('.card-footer').find('.circle');
 
@@ -302,14 +291,21 @@
                         }
                     });
                 });
-            }
+            @endif
 
             //--------------------------------------
             // Get user id and order type
             //--------------------------------------  
             function getCartInfo() {
+                var name = '';
+                var id = "{{ session()->get('cartUserId') }}";
+                var user = "{{ session()->get('cartUser') }}";
+                var type = "{{ session()->get('cartType') }}";
+
+                var progressSteps = (user === '' && type === '') ? ['1', '2'] : [];
+
                 const Queue = Swal.mixin({
-                    progressSteps: ['1', '2'],
+                    progressSteps: progressSteps,
                     allowOutsideClick: false,
                     showClass: {
                         backdrop: 'swal2-noanimation'
@@ -319,13 +315,9 @@
                     },
                 });
 
-                var name = '';
-                var id = '';
-                var user = "{{ session()->get('cartUser') }}";
-                var type = "{{ session()->get('cartType') }}";
 
                 (async () => {
-                    if (user == '') {
+                    if (user == '' || id == '') {
                         @if (auth()->guard('customer')->check())
                             name = "{{ auth()->guard('customer')->user()->name }}";
                             id = "{{ auth()->guard('customer')->user()->id }}";
@@ -355,18 +347,13 @@
                                 });
                             }
                         }).then((result) => {
-                            if (result.isConfirmed) {
-                                user = id;
-                            } else if (result.isDismissed) {
-                                user = 'Guest';
-                            }
-
                             // Set session for cartUser
                             $.ajax({
                                 type: 'POST',
                                 url: '/carts/session',
                                 data: {
-                                    user: user,
+                                    user: name,
+                                    userId: id,
                                     _token: '{{ csrf_token() }}',
                                 }
                             });
@@ -415,8 +402,6 @@
             //--------------------------------------
             // Display & search menu
             //--------------------------------------
-            attachEventHandlers();
-
             function filterMeals() {
                 var selectedCategory = $('#categorySelect').val();
                 var sortSelect = $('#sortSelect').val();
@@ -436,12 +421,6 @@
                         $('#categorySelect').val(selectedCategory);
                         $('#sortSelect').val(sortSelect);
                         $('#search-menu').val(inputQuery);
-
-                        attachEventHandlers();
-
-                        @if ($addToCart)
-                            attachClickHandler();
-                        @endif
                     },
                     error: function(xhr, status, error) {
                         console.log(xhr.responseText);
@@ -449,60 +428,57 @@
                 });
             }
 
-            function attachEventHandlers() {
-                $('#categorySelect, #sortSelect').off('change').on('change', function() {
-                    filterMeals();
-                });
+            $('#categorySelect, #sortSelect').off('change').on('change', function() {
+                filterMeals();
+            });
 
-                $('#search-icon').off('click').on('click', function() {
-                    filterMeals();
-                });
+            $('#search-icon').off('click').on('click', function() {
+                filterMeals();
+            });
 
-                $('input[name="search-menu"]').on('input', function() {
-                    const input = $(this).val();
-                    const searchInput = $(this);
-                    const crossIcon = $('#cross-icon');
+            $('input[name="search-menu"]').on('input', function() {
+                const input = $(this).val();
+                const searchInput = $(this);
+                const crossIcon = $('#cross-icon');
 
-                    if (input !== '') {
-                        crossIcon.show();
-                        searchInput.css({
-                            'padding-right': '3.7rem',
-                            'important': 'true'
-                        });
-                    } else {
-                        crossIcon.hide();
-                        searchInput.css('padding-right', '');
-                    }
-                });
-
-                $('#cross-icon').on('click', function() {
-                    const searchInput = $('input[name="search-menu"]')
-                    const crossIcon = $(this);
-
-                    searchInput.val('');
-                    // Trigger reload
-                    filterMeals();
-                });
-
-                if ($('input[name="search-menu"]').val() !== '') {
-                    $('#cross-icon').show();
-                }
-
-                $('input[name="search-menu"]').focus(function() {
-                    // Enable the keydown event
-                    $(window).on('keydown', function(event) {
-                        if (event.keyCode == 13) {
-                            event.preventDefault();
-                            filterMeals();
-                            return false;
-                        }
+                if (input !== '') {
+                    crossIcon.show();
+                    searchInput.css({
+                        'padding-right': '3.7rem',
+                        'important': 'true'
                     });
-                }).blur(function() {
-                    // Disable the keydown event
-                    $(window).off('keydown');
-                });
+                } else {
+                    crossIcon.hide();
+                    searchInput.css('padding-right', '');
+                }
+            });
+
+            $('#cross-icon').on('click', function() {
+                const searchInput = $('input[name="search-menu"]')
+                const crossIcon = $(this);
+
+                searchInput.val('');
+                // Trigger reload
+                filterMeals();
+            });
+
+            if ($('input[name="search-menu"]').val() !== '') {
+                $('#cross-icon').show();
             }
 
+            $('input[name="search-menu"]').focus(function() {
+                // Enable the keydown event
+                $(window).on('keydown', function(event) {
+                    if (event.keyCode == 13) {
+                        event.preventDefault();
+                        filterMeals();
+                        return false;
+                    }
+                });
+            }).blur(function() {
+                // Disable the keydown event
+                $(window).off('keydown');
+            });
         });
     </script>
 @endsection

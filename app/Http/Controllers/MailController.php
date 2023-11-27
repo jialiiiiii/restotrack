@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendReceiptEmail;
 use Illuminate\Http\Request;
 use Mail;
 
@@ -22,5 +23,10 @@ class MailController extends Controller
             })
         ;
 
+    }
+
+    public static function receiptEmail($to, $orderMeals, $points)
+    {
+        dispatch(new SendReceiptEmail($to, 'emails.receiptemail', compact('orderMeals', 'points'), 'Here Your Receipt'));
     }
 }

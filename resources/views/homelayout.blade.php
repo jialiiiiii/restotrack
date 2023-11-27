@@ -190,7 +190,7 @@
                         <a class="nav-link {{ $page === 'menu' ? 'active' : '' }}" href="/menu">Menu</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ $page === 'reserve' ? 'active' : '' }}" href="/">Reserve</a>
+                        <a class="nav-link {{ $page === 'reservations/create' ? 'active' : '' }}" href="/reservations/create">Reserve</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ $page === 'track' ? 'active' : '' }}" href="/track">Track</a>
@@ -200,11 +200,13 @@
                     @if (auth()->guard('customer')->check())
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
-                                data-bs-toggle="myDropdown" aria-haspopup="true" aria-expanded="false">
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="underline">Hi,
                                     {{ auth()->guard('customer')->user()->name ?? 'Guest' }}</span>
                             </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="/orders/view">Orders</a>
+                                <a class="dropdown-item" href="/reservations/view">Reservations</a>
                                 <a class="dropdown-item" href="/customers/profile">Profile</a>
                                 <a class="dropdown-item" href="/logout">Logout</a>
                             </div>

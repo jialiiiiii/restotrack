@@ -186,7 +186,7 @@ class CustomerController extends Controller
         return redirect('/customers')->with('msg', 'deleteSuccess');
     }
 
-    public function cache(Request $request)
+    private function cache(Request $request)
     {
         $token = Str::random(60);
         $email = $request->email;

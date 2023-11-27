@@ -71,7 +71,7 @@
                                 {{ number_format($m->price, 2) }}
                             @endif
                         </td>
-                        <td class="text-center">
+                        <td class="text-center" style="min-width: 205px">
                             <form class="availability-form d-inline" method="post"
                                 action="/meals/{{ $m->id }}/toggleAvailability" data-name="{{ $m->name }}"
                                 data-availability="{{ $m->available }}">

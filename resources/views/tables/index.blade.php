@@ -6,6 +6,28 @@
         td:not(:has(span.dot)) {
             cursor: context-menu !important;
         }
+
+        .l-label {
+            position: fixed;
+            top: calc(var(--header-height) + 1rem);
+            right: -20px;
+            padding-right: 20px;
+            width: 80px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top-left-radius: .25rem;
+            border-bottom-left-radius: .25rem;
+            background-color: #764A3D;
+        }
+
+        i.fa-qrcode {
+            font-size: 1.5rem;
+            color: var(--first-color-light);
+            cursor: pointer;
+            vertical-align: middle;
+        }
     </style>
 @endsection
 
@@ -60,7 +82,7 @@
 
                             <div class="status">
                                 @if ($is_predefined)
-                                    <span class="dot {{ getColorForStatus($table->status) }}"></span>
+                                    <span class="dot {{ getColorForTableStatus($table->status) }}"></span>
                                 @else
                                     {{ ucfirst($table->status) }}
                                 @endif
@@ -73,8 +95,35 @@
         </div>
     </div>
 
+    <div class="l-label" id="label">
+        <i class="fas fa-qrcode"></i>
+    </div>
+
+    @php
+        $encodedQr = base64_encode($qr);
+    @endphp
+
+
     <script>
         $(document).ready(function() {
+            // Display takeaway qr
+            $('#label').on('click', function() {
+                Swal.fire({
+                    title: 'QR Code for Takeaway',
+                    html: '<img src="data:image/png;base64,{{ $encodedQr }}' +
+                        '" style="max-width: 100%;">',
+                    showCancelButton: true,
+                    cancelButtonText: "Close",
+                    confirmButtonText: "Download",
+                    confirmButtonColor: '#3085d6',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location = '/tables/qr?table=ta'
+                    }
+                });
+
+            });
+
             $('#table-count').text('{{ $tableCounter }} tables');
 
             // Adjust empty td width
@@ -84,6 +133,7 @@
             // Adjust table display
             var othersTd = $('td:not(.item-empty):not(:has(div.image img))');
             var tdByGroup = {};
+            var uniqueId = 1;
 
             // Link related td
             othersTd.each(function() {
@@ -112,7 +162,7 @@
                 }
 
                 // Grouping
-                var group = index;
+                var group = uniqueId++;
 
                 for (var no in tdByGroup) {
                     if (tdByGroup.hasOwnProperty(no)) {
@@ -123,8 +173,11 @@
                             var itemTd = item.td;
 
                             if (itemStatus === status &&
-                                (itemTd.get(0) === top.get(0) || itemTd.get(0) === bottom.get(0) ||
-                                    itemTd.get(0) === left.get(0) || itemTd.get(0) === right.get(0))
+                                (
+                                    itemTd.get(0) === top.get(0) || itemTd.get(0) === bottom.get(
+                                        0) ||
+                                    itemTd.get(0) === left.get(0) || itemTd.get(0) === right.get(0)
+                                )
                             ) {
                                 group = no;
                             }
@@ -139,6 +192,57 @@
                     td: td
                 });
             });
+
+            // Refine td linking
+            for (var group in tdByGroup) {
+                if (tdByGroup.hasOwnProperty(group)) {
+                    var items = tdByGroup[group];
+
+                    for (var i = 0; i < items.length; i++) {
+                        var item = items[i];
+                        var shouldBreak = false;
+
+                        var top = item.td.parent().prev().children().eq(item.td.index());
+                        var bottom = item.td.parent().next().children().eq(item.td.index());
+                        var left = item.td.prev();
+                        var right = item.td.next();
+
+                        for (var existingGroup in tdByGroup) {
+                            if (tdByGroup.hasOwnProperty(existingGroup) && existingGroup !== group) {
+                                var existingItems = tdByGroup[existingGroup];
+
+                                for (var j = 0; j < existingItems.length; j++) {
+                                    var existingItem = existingItems[j];
+
+                                    if (
+                                        item.status === existingItem.status &&
+                                        (existingItem.td.get(0) === top.get(0) ||
+                                            existingItem.td.get(0) === bottom.get(0) ||
+                                            existingItem.td.get(0) === left.get(0) ||
+                                            existingItem.td.get(0) === right.get(0))
+                                    ) {
+                                        tdByGroup[existingGroup].unshift(item);
+
+                                        // Remove item
+                                        var index = tdByGroup[group].indexOf(item);
+                                        if (index !== -1) {
+                                            tdByGroup[group].splice(index, 1);
+                                        }
+
+                                        shouldBreak = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (shouldBreak) {
+                            continue;
+                        }
+                    }
+
+                }
+            }
 
             // Display status at center
             for (var no in tdByGroup) {

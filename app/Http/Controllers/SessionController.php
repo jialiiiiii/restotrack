@@ -13,7 +13,6 @@ use Laravel\Socialite\Facades\Socialite;
 
 class SessionController extends Controller
 {
-    protected $loginAttempts = 5;
 
     public function login(Request $request)
     {
@@ -104,9 +103,6 @@ class SessionController extends Controller
         } elseif (auth()->guard('staff')->check()) {
             auth()->guard('staff')->logout();
         }
-
-        // Regenerate session ID and remove all data
-        $request->session()->invalidate();
 
         return redirect()->intended('/home')->with('msg', 'logoutSuccess');
     }

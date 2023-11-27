@@ -18,6 +18,11 @@ class Staff extends Model implements Authenticatable
         return $query->where('role', 'staff');
     }
 
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
+
     /**
      * Get the name of the unique identifier for the user.
      *

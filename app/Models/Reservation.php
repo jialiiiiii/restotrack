@@ -9,6 +9,9 @@ class Reservation extends Model
 {
     use HasFactory;
     protected $fillable = ['order_id', 'pax', 'datetime'];
+    protected $casts = [
+        'datetime' => 'datetime'
+    ];
 
     public function order()
     {

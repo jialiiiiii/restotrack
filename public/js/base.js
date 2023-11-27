@@ -9,10 +9,20 @@ function reload(path) {
     $.ajax({
         url: path ?? window.location.href,
         type: 'GET',
-        success: function(data) {
-            $('body').html(data);
+        async: true,
+        success: function (data) {
+            // Create a new document using DOMParser
+            var parser = new DOMParser();
+            var newDoc = parser.parseFromString(data, 'text/html');
+
+            // Replace the current document with the new one
+            document.open();
+            document.write(newDoc.documentElement.outerHTML);
+            document.close();
+
+            // $('body').html(data);
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             console.error('Error:', xhr, status, error);
         }
     });
@@ -21,12 +31,87 @@ function reload(path) {
 //--------------------------------------
 // Others
 //--------------------------------------
-$(function () {
 
-    // Custom navbar dropdown
-    $('[data-bs-toggle="myDropdown"]').on('click', function () {
-        // Toggle the dropdown menu visibility
-        $(this).next('.dropdown-menu').toggle();
+// Date time form
+function validateDateTime(date, time) {
+    if (date === '' || time === '') {
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Please select both date and time.",
+            confirmButtonColor: '#3085d6',
+        });
+
+        return false;
+    } else {
+        var selectedDateTime = new Date(date + ' ' + time);
+        var currentDate = new Date();
+
+        // Add 1 hour
+        currentDate.setHours(currentDate.getHours() + 1);
+
+        // Check if it is at least 1 hour after now
+        if (selectedDateTime < currentDate) {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "The time should be at least 1 hour later than now.",
+                confirmButtonColor: '#3085d6',
+            });
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// Date time picker
+function disableSundays() {
+    var inputDate = document.getElementById("date");
+    inputDate.addEventListener("input", function () {
+        var selectedDate = new Date(inputDate.value);
+        if (selectedDate.getDay() === 0) { // 0 corresponds to Sunday
+            inputDate.value = '';
+        }
+    });
+}
+
+function disableInvalidTimes() {
+    var inputTime = document.getElementById("time");
+    inputTime.addEventListener("input", function () {
+        var selectedTime = inputTime.value;
+
+        // Parse selected time as a Date object for easier comparison
+        var selectedTimeObj = new Date('2000-01-01T' + selectedTime);
+
+        var minTime = new Date('2000-01-01T09:00');
+        var maxTime = new Date('2000-01-01T21:00');
+
+        // Check if the selected time is within the valid range
+        if (selectedTimeObj < minTime || selectedTimeObj > maxTime) {
+            inputTime.value = '';
+        }
+    });
+}
+
+// All functions
+function loadBaseJs() {
+    // Order page
+    $('.orderBox div.status').each(function () {
+        var dot = $(this).find('.dot');
+        var borderColor = dot.css('border-color');
+        $(this).css('color', borderColor);
+    });
+
+    $('.orderBar, .reserveBox').on('click', function () {
+        var icon = $(this).find('i');
+        icon.toggleClass('fa-chevron-down fa-chevron-up');
+    });
+
+    $('.dot.small').each(function () {
+        var borderColor = $(this).css('border-color');
+        $(this).css('background-color', borderColor);
     });
 
     $(document).on('click', function (event) {
@@ -50,7 +135,7 @@ $(function () {
         togglescrollTop();
         window.addEventListener('load', togglescrollTop);
         document.addEventListener('scroll', togglescrollTop);
-        scrollTop.addEventListener('click', function() {
+        scrollTop.addEventListener('click', function () {
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
@@ -162,5 +247,9 @@ $(function () {
             }
         })
     });
+}
 
+// Document ready
+$(function () {
+    loadBaseJs();
 });

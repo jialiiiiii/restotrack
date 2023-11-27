@@ -11,8 +11,8 @@
                     text: 'Meal updated successfully!',
                 @elseif (session()->get('msg') == 'updateNoChanges')
                     icon: 'info',
-                        title: 'No Changes Made',
-                        text: 'Meal remain unchanged.',
+                    title: 'No Changes Made',
+                    text: 'Meal remain unchanged.',
                 @endif
                 showCancelButton: true,
                 cancelButtonText: 'Close',

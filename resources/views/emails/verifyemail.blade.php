@@ -109,8 +109,8 @@ mso-hide:all;
 <td align="center" valign="top" style="padding:0;Margin:0;width:560px">
 <table cellpadding="0" cellspacing="0" width="100%" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:separate;border-spacing:0px;border-radius:5px" role="presentation">
 <tr>
-<td align="center" style="padding:0;Margin:0;padding-top:10px;padding-bottom:10px"><!--[if mso]><a href="http://127.0.0.1:8000/" target="_blank" hidden>
-<v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" esdevVmlButton href="http://127.0.0.1:8000/"
+<td align="center" style="padding:0;Margin:0;padding-top:10px;padding-bottom:10px"><!--[if mso]><a href="http://127.0.0.1:8000/home" target="_blank" hidden>
+<v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" esdevVmlButton href="http://127.0.0.1:8000/home"
 style="height:44px; v-text-anchor:middle; width:181px" arcsize="14%" stroke="f" fillcolor="#f6c329">
 <w:anchorlock></w:anchorlock>
 <center style='color:#000000; font-family:lora, georgia, "times new roman", serif; font-size:18px; font-weight:400; line-height:18px; mso-text-raise:1px'>Verify Now</center>

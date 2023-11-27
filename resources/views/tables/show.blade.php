@@ -33,7 +33,7 @@
             <img class="item-img" src="/img/tables/seat-{{ $t->seat }}.png" />
         </div>
         <div class="status">
-            <span class="dot {{ getColorForStatus($t->status) }}"></span>
+            <span class="dot {{ getColorForTableStatus($t->status) }}"></span>
         </div>
     </div>
 

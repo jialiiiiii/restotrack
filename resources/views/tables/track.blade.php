@@ -2,7 +2,7 @@
 @section('title', 'Track')
 
 @section('head')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <style>
         .title-blue {
             padding-right: 70px;
@@ -157,7 +157,7 @@
                         @endif
 
                         <td class="text-center align-middle @if ($table->status == null) item-empty @endif"
-                            id="{{ $table->id }}">
+                            id="{{ $table->id }}" data-status="{{ $table->status }}">
 
                             <div class="d-flex justify-content-center">
                                 {{-- Show seat no only when status is predefined as above --}}
@@ -171,7 +171,7 @@
 
                                 <div class="status">
                                     @if ($is_predefined)
-                                        <span class="dot {{ getColorForStatus($table->status) }}"></span>
+                                        <span class="dot {{ getColorForTableStatus($table->status) }}"></span>
                                     @else
                                         {{ ucfirst($table->status) }}
                                     @endif
@@ -185,7 +185,9 @@
         </div>
     </div>
 
+    {{-- Receive broadcasts --}}
     @vite('resources/js/app.js')
+
     <script>
         $(document).ready(function() {
             // Adjust empty td width
@@ -195,6 +197,7 @@
             // Adjust table display
             var othersTd = $('td:not(.item-empty):not(:has(div.image img))');
             var tdByGroup = {};
+            var uniqueId = 1;
 
             // Link related td
             othersTd.each(function() {
@@ -223,7 +226,7 @@
                 }
 
                 // Grouping
-                var group = index;
+                var group = uniqueId++;
 
                 for (var no in tdByGroup) {
                     if (tdByGroup.hasOwnProperty(no)) {
@@ -234,8 +237,11 @@
                             var itemTd = item.td;
 
                             if (itemStatus === status &&
-                                (itemTd.get(0) === top.get(0) || itemTd.get(0) === bottom.get(0) ||
-                                    itemTd.get(0) === left.get(0) || itemTd.get(0) === right.get(0))
+                                (
+                                    itemTd.get(0) === top.get(0) || itemTd.get(0) === bottom.get(
+                                        0) ||
+                                    itemTd.get(0) === left.get(0) || itemTd.get(0) === right.get(0)
+                                )
                             ) {
                                 group = no;
                             }
@@ -250,6 +256,59 @@
                     td: td
                 });
             });
+
+            console.log(tdByGroup);
+
+            // Refine td linking
+            for (var group in tdByGroup) {
+                if (tdByGroup.hasOwnProperty(group)) {
+                    var items = tdByGroup[group];
+
+                    for (var i = 0; i < items.length; i++) {
+                        var item = items[i];
+                        var shouldBreak = false;
+
+                        var top = item.td.parent().prev().children().eq(item.td.index());
+                        var bottom = item.td.parent().next().children().eq(item.td.index());
+                        var left = item.td.prev();
+                        var right = item.td.next();
+
+                        for (var existingGroup in tdByGroup) {
+                            if (tdByGroup.hasOwnProperty(existingGroup) && existingGroup !== group) {
+                                var existingItems = tdByGroup[existingGroup];
+
+                                for (var j = 0; j < existingItems.length; j++) {
+                                    var existingItem = existingItems[j];
+
+                                    if (
+                                        item.status === existingItem.status &&
+                                        (existingItem.td.get(0) === top.get(0) ||
+                                            existingItem.td.get(0) === bottom.get(0) ||
+                                            existingItem.td.get(0) === left.get(0) ||
+                                            existingItem.td.get(0) === right.get(0))
+                                    ) {
+                                        tdByGroup[existingGroup].unshift(item);
+
+                                        // Remove item
+                                        var index = tdByGroup[group].indexOf(item);
+                                        if (index !== -1) {
+                                            tdByGroup[group].splice(index, 1);
+                                        }
+
+                                        shouldBreak = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (shouldBreak) {
+                            continue;
+                        }
+                    }
+
+                }
+            }
 
             // Display status at center
             for (var no in tdByGroup) {
@@ -299,12 +358,16 @@
             var tablesTd = $('td:has(div.image img)');
 
             tablesTd.css('cursor', 'pointer');
-            tablesTd.attr('title', 'Click to view table');
 
             tablesTd.on('click', function() {
                 var id = $(this).attr('id');
+                var status = $(this).data('status');
 
-                // To do
+                Swal.fire({
+                    title: "Table " + id,
+                    text: "This table is " + status + ".",
+                    confirmButtonColor: '#3085d6',
+                });
             });
         });
     </script>

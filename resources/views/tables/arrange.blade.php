@@ -186,16 +186,6 @@
             padding: 8px;
             cursor: pointer;
         }
-
-        .btn-success {
-            background: #18ac31;
-            border-color: #18ac31;
-        }
-
-        .btn-success:hover {
-            background: #19bf35;
-            border-color: #19bf35;
-        }
     </style>
 @endsection
 
@@ -264,7 +254,7 @@
 
                             <div class="status">
                                 @if ($is_predefined)
-                                    <span class="dot {{ getColorForStatus($table->status) }}"></span>
+                                    <span class="dot {{ getColorForTableStatus($table->status) }}"></span>
                                 @else
                                     <input type="text" class="form-control" value="{{ ucfirst($table->status) }}"
                                         maxlength="30" disabled />
@@ -412,6 +402,7 @@
 
                 target.removeClass('item-empty');
                 imageDiv.html(img);
+                statusDiv.css('width', 'initial');
                 statusDiv.html('<span class="dot ' + status + '"></span>');
 
             } else if (type == 'text') {
@@ -618,7 +609,7 @@
                 return tableData;
             }
 
-            
+
             //--------------------------------------
             // Toolbar
             //--------------------------------------

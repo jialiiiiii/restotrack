@@ -7,6 +7,7 @@ use App\Models\Meal;
 use App\Models\Table;
 use App\Validation\FormValidation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
 
 class MealController extends Controller
@@ -16,25 +17,45 @@ class MealController extends Controller
         $addToCart = false;
         $cartQuantity = 0;
 
-        if ( ($request->filled('table') && is_numeric($request->input('table'))) || $request->session()->has("cartTable")) {
+        // Ordering
+        if ($request->filled('table') || $request->session()->has("cartTable")) {
 
             // Table
-            $tid = $request->input('table') ?? $request->session()->get("cartTable");
-            $tableResult = Table::where('id', $tid)->exists();
+            if (is_numeric($request->input('table')) || is_numeric($request->session()->get("cartTable"))) {
+                $tid = $request->input('table') ?? $request->session()->get("cartTable");
+                $tableResult = Table::where('id', $tid)->where('status', 'available')->where('seat', '>', 0)->exists();
+
+            } elseif ($request->input('table') === "ta" || $request->session()->get("cartTable") === "ta") {
+                $tid = "ta";
+                $tableResult = true;
+            } else {
+                $tableResult = false;
+            }
 
             if ($tableResult) {
                 $addToCart = true;
                 $request->session()->put("cartTable", $tid);
+
+                if ($tid === "ta") {
+                    $request->session()->put("cartType", "takeaway");
+                }
+            } else {
+                $request->session()->forget(["cartTable", "cartType"]);
             }
 
             // Cart
-            if ($request->session()->exists('cartUser')) {
-                $uid = $request->session()->get('cartUser');
-
+            if ($request->session()->has('cartUserId')) {
+                $uid = $request->session()->get('cartUserId');
                 $cartResult = Cart::where('user_id', $uid)->sum('quantity');
-
                 $cartQuantity = $cartResult;
             }
+            // Make reservation (customers only)
+        } else if ($request->session()->has("cartReserve")) {
+            $addToCart = true;
+
+            $uid = Auth::guard('customer')->user()->id;
+            $cartResult = Cart::where('user_id', $uid)->sum('quantity');
+            $cartQuantity = $cartResult;
         }
 
         $resetPage = false;
@@ -81,7 +102,7 @@ class MealController extends Controller
 
     public function toggleAvailability($id)
     {
-        $m = Meal::findOrFail($id);
+        $m = Meal::find($id);
 
         $m->available = ! $m->available;
         $m->save();

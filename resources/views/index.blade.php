@@ -191,6 +191,49 @@
             line-height: 24px;
             font-size: 15px;
         }
+
+        /* Preloader */
+        #preloader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            overflow: hidden;
+            background: #f4e1cd;
+            transition: all 0.6s ease-out;
+            width: 100%;
+            height: 100vh;
+        }
+
+        #preloader:before,
+        #preloader:after {
+            content: "";
+            position: absolute;
+            border: 4px solid #ac1820;
+            border-radius: 50%;
+            animation: animate-preloader 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+        }
+
+        #preloader:after {
+            animation-delay: -0.5s;
+        }
+
+        @keyframes animate-preloader {
+            0% {
+                width: 10px;
+                height: 10px;
+                top: calc(50% - 5px);
+                left: calc(50% - 5px);
+                opacity: 1;
+            }
+
+            100% {
+                width: 72px;
+                height: 72px;
+                top: calc(50% - 36px);
+                left: calc(50% - 36px);
+                opacity: 0;
+            }
+        }
     </style>
 @endsection
 
@@ -262,28 +305,36 @@
             <div class="gallery-slider swiper">
                 <div class="swiper-wrapper align-items-center">
                     <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
-                            href="img/home/gallery-1.jpg"><img src="img/home/gallery-1.jpg" class="img-fluid" alt=""></a>
+                            href="img/home/gallery-1.jpg"><img src="img/home/gallery-1.jpg" class="img-fluid"
+                                alt=""></a>
                     </div>
                     <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
-                            href="img/home/gallery-2.jpg"><img src="img/home/gallery-2.jpg" class="img-fluid" alt=""></a>
+                            href="img/home/gallery-2.jpg"><img src="img/home/gallery-2.jpg" class="img-fluid"
+                                alt=""></a>
                     </div>
                     <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
-                            href="img/home/gallery-3.jpg"><img src="img/home/gallery-3.jpg" class="img-fluid" alt=""></a>
+                            href="img/home/gallery-3.jpg"><img src="img/home/gallery-3.jpg" class="img-fluid"
+                                alt=""></a>
                     </div>
                     <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
-                            href="img/home/gallery-4.jpg"><img src="img/home/gallery-4.jpg" class="img-fluid" alt=""></a>
+                            href="img/home/gallery-4.jpg"><img src="img/home/gallery-4.jpg" class="img-fluid"
+                                alt=""></a>
                     </div>
                     <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
-                            href="img/home/gallery-5.jpg"><img src="img/home/gallery-5.jpg" class="img-fluid" alt=""></a>
+                            href="img/home/gallery-5.jpg"><img src="img/home/gallery-5.jpg" class="img-fluid"
+                                alt=""></a>
                     </div>
                     <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
-                            href="img/home/gallery-6.jpg"><img src="img/home/gallery-6.jpg" class="img-fluid" alt=""></a>
+                            href="img/home/gallery-6.jpg"><img src="img/home/gallery-6.jpg" class="img-fluid"
+                                alt=""></a>
                     </div>
                     <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
-                            href="img/home/gallery-7.jpg"><img src="img/home/gallery-7.jpg" class="img-fluid" alt=""></a>
+                            href="img/home/gallery-7.jpg"><img src="img/home/gallery-7.jpg" class="img-fluid"
+                                alt=""></a>
                     </div>
                     <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery"
-                            href="img/home/gallery-8.jpg"><img src="img/home/gallery-8.jpg" class="img-fluid" alt=""></a>
+                            href="img/home/gallery-8.jpg"><img src="img/home/gallery-8.jpg" class="img-fluid"
+                                alt=""></a>
                     </div>
                 </div>
                 <div class="swiper-pagination"></div>
@@ -347,7 +398,16 @@
     <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i
             class="fas fa-arrow-up"></i></a>
 
+    <div id="preloader"></div>
+
     <script>
+        const preloader = document.querySelector('#preloader');
+        if (preloader) {
+            window.addEventListener('load', () => {
+                preloader.remove();
+            });
+        }
+
         function aos_init() {
             AOS.init({
                 duration: 1000,

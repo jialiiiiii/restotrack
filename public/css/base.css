@@ -45,8 +45,14 @@ div.body {
 }
 
 .form-control:focus,
-.form-select:focus {
+.form-select:focus,
+.form-check-input:focus {
     box-shadow: 0 0 0 0.1rem rgba(13, 110, 253, .25);
+}
+
+.form-check-input:checked {
+    background-color: #1F579C;
+    border-color: #1F579C;
 }
 
 .form-text {
@@ -85,6 +91,16 @@ div.body {
     box-shadow: 0 0 0 0.25rem rgb(164 117 103 / 50%);
 }
 
+.btn-success {
+    background: #18ac31;
+    border-color: #18ac31;
+}
+
+.btn-success:hover {
+    background: #2bb642;
+    border-color: #2bb642;
+}
+
 .custom-form {
     width: 40%;
 }
@@ -98,6 +114,13 @@ div.body {
 @media only screen and (max-width: 576px) {
     .custom-form {
         width: 80%;
+    }
+}
+
+/* Empty result */
+@media only screen and (min-width: 1025px) {
+    .img-empty {
+        width: 220px !important;
     }
 }
 
@@ -142,19 +165,87 @@ div.body {
 }
 
 .btn-danger {
-    background: #dd4b39;
-    border-color: #dd4b39;
+    background: #dc3545;
+    border-color: #dc3545;
 }
 
 .btn-danger:hover {
-    background: #e44f3b;
-    border-color: #e44f3b;
+    background: #e34352;
+    border-color: #e34352;
 }
 
+/* Cart & reservation */
+.text-brown {
+    color: #815447;
+}
 
-/* --------------------------------------------------
-    Management Portal 
----------------------------------------------------*/
+.total {
+    letter-spacing: 1px;
+}
+
+/* Reservation */
+input[type=date] {
+    padding-right: .61rem;
+}
+
+input[type=time] {
+    padding-right: .53rem;
+}
+
+/* Orders */
+.orderBox, .reserveBox {
+    background: #fbeee0;
+    line-height: 1.5;
+    padding: 18px;
+    border-radius: 10px;
+}
+
+.orderBox .fa-chevron-down, 
+.reserveBox .fa-chevron-down,
+.orderBox .fa-chevron-up,
+.reserveBox .fa-chevron-up {
+    font-size: 1.25rem;
+    color: #0c376c;
+}
+
+.orderBar, .reserveBar {
+    font-size: 1.2rem;
+}
+
+.dot.small {
+    position: relative;
+    height: 12px;
+    width: 12px;
+    left: 0;
+    top: 0;
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+.orderBox div.status {
+    font-size: 1rem;
+    vertical-align: text-bottom;
+}
+
+@media only screen and (max-width: 768px) {
+    .orderBox, .reserveBox {
+        width: 90% !important;
+    }
+}
+
+@media only screen and (max-width: 425px) {
+    .orderBox, .reserveBox {
+        width: 90% !important;
+    }
+
+    .orderBar, .reserveBar {
+        font-size: 1.1rem;
+    }
+
+    .orderBox div.status {
+        font-size: .95rem;
+    }
+}
 
 /* Tables */
 img.item-img {
@@ -194,6 +285,16 @@ span.gray {
     border-color: #9c9c9c;
 }
 
+span.blue {
+    background: #0096ff;
+    border-color: #0096ff;
+}
+
+span.orange {
+    background: #fa772a;
+    border-color: #fa772a;
+}
+
 span#table-count {
     background: #1F579C;
     color: #fff;
@@ -213,6 +314,7 @@ div#content-pd table {
 div#content-pd td {
     height: 150px !important;
     position: relative;
+    width: initial;
     cursor: pointer;
     border: none;
     background: #fff;
@@ -275,7 +377,7 @@ div#content-pd td.item-empty {
     display: none;
 }
 
-/* Table */
+/* Data table */
 .table {
     color: inherit;
     background: #fff;
@@ -320,6 +422,6 @@ a.page-link:focus {
     box-shadow: 0 0 0 0.1rem rgba(13, 110, 253, .25);
 }
 
-p.small.text-muted {
+.small.text-muted {
     color: #0c3261 !important;
 }
