@@ -249,7 +249,7 @@
                         of cheesy, saucy, and irresistible delight.
                     </p>
                     <div class="d-flex" data-aos="fade-up" data-aos-delay="200">
-                        <a href="/" class="btn-start-order">Order Now</a>
+                        <a href="/menu" class="btn-start-order">Order Now</a>
                     </div>
                 </div>
                 <div class="col-lg-5 order-1 order-lg-2 text-center text-lg-start">

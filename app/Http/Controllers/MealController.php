@@ -21,9 +21,13 @@ class MealController extends Controller
         if ($request->filled('table') || $request->session()->has("cartTable")) {
 
             // Table
-            if (is_numeric($request->input('table')) || is_numeric($request->session()->get("cartTable"))) {
-                $tid = $request->input('table') ?? $request->session()->get("cartTable");
+            if (is_numeric($request->input('table'))) {
+                $tid = $request->input('table');
                 $tableResult = Table::where('id', $tid)->where('status', 'available')->where('seat', '>', 0)->exists();
+
+            } else if (is_numeric($request->session()->get("cartTable"))) {
+                $tid = $request->session()->get("cartTable");
+                $tableResult = Table::where('id', $tid)->where('seat', '>', 0)->exists();
 
             } elseif ($request->input('table') === "ta" || $request->session()->get("cartTable") === "ta") {
                 $tid = "ta";

@@ -35,7 +35,7 @@ class ReservationController extends Controller
         event(new ChangesNotification('orders'));
         // Inform order manage page
         event(new ChangesNotification('orders.manage'));
-        
+
         // Change table status
         Table::find($tid)->update(['status' => 'occupied']);
 
@@ -86,15 +86,19 @@ class ReservationController extends Controller
         $query = $request->input('query');
         if ($query) {
             $results->where(function ($queryBuilder) use ($query) {
-                // Check if query is a valid date
-                if (DateTime::createFromFormat('Y-m-d', $query) !== false) {
-                    $queryBuilder->where('datetime', 'like', '%' . $query . '%');
-                }
+                // Check if the query is date
+                try {
+                    $date = Carbon::createFromFormat('d/m/Y', $query);
+                    $formattedDate = $date->toDateString();
+                    $queryBuilder->orWhereDate('datetime', '=', $formattedDate);
+                } catch (\Exception $e) {}
 
-                // Check if query is a valid time
-                if (DateTime::createFromFormat('H:i:s', $query) !== false) {
-                    $queryBuilder->orWhere('datetime', 'like', '%' . $query . '%');
-                }
+                // Check if the query is time
+                try {
+                    $time = Carbon::createFromFormat('h:ia', $query);
+                    $formattedTime = $time->format('H:i');
+                    $queryBuilder->orWhereTime('datetime', '=', $formattedTime);
+                } catch (\Exception $e) {}
 
                 // Check if the query is an integer
                 if (ctype_digit($query)) {
@@ -235,7 +239,7 @@ class ReservationController extends Controller
      */
     public function show(Reservation $reservation)
     {
-        
+
     }
 
     /**
@@ -244,7 +248,7 @@ class ReservationController extends Controller
      */
     public function edit(Reservation $reservation)
     {
-        
+
     }
 
     /**

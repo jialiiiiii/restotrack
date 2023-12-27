@@ -35,10 +35,12 @@ class CustomerController extends Controller
         if (! empty($validate)) {
             FormValidation::validate($request, $validate);
 
-            foreach ($validate as $field) {
-                if ($request->has($field)) {
-                    $c->$field = $request->$field;
-                }
+            if (in_array('name', $validate)) {
+                $c->name = $request->name;
+            }
+
+            if (in_array('password', $validate)) {
+                $c->password = Hash::make($request->password);
             }
 
             $c->save();
@@ -57,7 +59,7 @@ class CustomerController extends Controller
     {
         FormValidation::validate($request, ['email', 'name', 'password', 'confirmPassword']);
 
-        cache($request);
+        $this->cache($request);
         return redirect('/customers/register')->with('msg', 'registerSuccess');
     }
 
@@ -126,7 +128,7 @@ class CustomerController extends Controller
             return redirect('/customers/create')->with('msg', 'addExist');
 
         } else {
-            cache($request);
+            $this->cache($request);
             return redirect('/customers/create')->with('msg', 'addSuccess');
         }
     }

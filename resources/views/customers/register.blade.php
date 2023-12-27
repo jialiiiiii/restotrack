@@ -16,7 +16,7 @@
 
     <div class="body">
         <div class="d-flex flex-column mx-auto custom-form">
-            <p class="h2 fw-bold title-blue text-center">Register An Account</p>
+            <p class="h2 fw-bold title-blue text-center">Register Account</p>
             <form method="post" action="/customers/register">
                 @csrf
 

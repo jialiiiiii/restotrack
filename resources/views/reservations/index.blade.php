@@ -185,17 +185,17 @@
                                 // Create form
                                 var form = '<div class="row mx-auto mb-2 input-group">';
                                 form +=
-                                    '<label class="input-group-text col-3" for="table">Table</label>';
+                                    '<label class="input-group-text col-3" for="table">Tables</label>';
                                 form += '<select class="form-select col" id="table" name="table">';
                                 results.forEach(function(r) {
-                                    form += '<option value="' + r.id + '">' + r.id +
-                                        ' - ' + r.seat + ' seats</option>';
+                                    form += '<option value="' + r.id + '">Table ' + r.id +
+                                        ' (' + r.seat + ' seats)</option>';
                                 });
                                 form += '</select></div>';
 
                                 // Popup form
                                 Swal.fire({
-                                    title: 'Arrange Table',
+                                    title: 'Assign Table',
                                     html: form,
                                     showCancelButton: true,
                                     cancelButtonText: 'Cancel',
